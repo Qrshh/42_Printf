@@ -5,72 +5,62 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abesneux <abesneux@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/27 16:12:34 by abesneux          #+#    #+#             */
-/*   Updated: 2023/10/28 22:21:52 by abesneux         ###   ########.fr       */
+/*   Created: 2023/10/30 18:04:59 by abesneux          #+#    #+#             */
+/*   Updated: 2023/10/30 19:15:36 by abesneux         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	ft_print_char(int str)
+int	ft_putchar(int c)
 {
-	write(1, &str, 1);
-	return (1);
+	return (write(1, &c, 1));
 }
 
-int	ft_print_string(char *str)
+int	ft_putstr(char *str)
 {
 	int	i;
-
-	i = 0;
-	if (!str)
-	{
-		ft_put_str("(null)");
-		return (6);
-	}
-	while (str[i])
-	{
-		write(1, &str[i], 1);
-		i++;
-	}
-	return (i);
-}
-
-int	ft_print_nbr(int nbr)
-{
-	int		len;
-	char	*convers;
+	int	len;
 
 	len = 0;
-	convers = ft_itoa(nbr);
-	len = ft_print_string(convers);
-	free(convers);
+	i = -1;
+	if (!str)
+		return (ft_putstr("(null)"));
+	while (str[++i])
+		len += ft_putchar(str[i]);
 	return (len);
 }
 
-int	ft_print_percent(void)
-{
-	write(1, "%", 1);
-	return (1);
-}
-
-int	ft_print_ptr(unsigned long long ptr)
+int	ft_putnbr(int n)
 {
 	int	len;
 
 	len = 0;
-	if (!ptr)
-	{
-		write(1, "(nil)", 5);
-		return (5);
-	}
-	len += write(1, "0x", 2);
-	if (ptr == 0)
-		len += write(1, "0", 1);
+	if (n == INT_MIN)
+		len += ft_putstr("-2147483648");
+	else if (n == INT_MAX)
+		len += ft_putstr("2147483647");
 	else
 	{
-		ft_put_ptr(ptr);
-		len += ft_printf_len_long(ptr);
+		if (n < 0)
+		{
+			len += ft_putchar('-');
+			n = -n;
+		}
+		if (n > 9)
+			len += ft_putnbr(n / 10);
+		len += ft_putchar((n % 10) + '0');
 	}
+	return (len);
+}
+
+int	ft_putnbr_un(unsigned int n)
+{
+	unsigned int	len;
+
+	len = 0;
+	if (n > 9)
+		len += ft_putnbr_un(n / 10);
+	len += ft_putchar((n % 10) + '0');
 	return (len);
 }
